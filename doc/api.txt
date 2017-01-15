@@ -1,0 +1,22 @@
+接口文档：
+
+/article/save
+
+[
+{
+    "title":"",
+    "url":"",
+    "digest":"",
+    "publishTime":"",
+    "appName":"",
+    "publisherUsername":""
+},
+]
+
+{"result":true}
+
+/article/setRead?articalId=123
+
+{"result":true}
+
+
