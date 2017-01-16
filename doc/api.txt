@@ -12,11 +12,17 @@
     "publisherUsername":""
 },
 ]
-
 {"result":true}
+
 
 /article/setRead?articalId=123
-
 {"result":true}
 
-
+/article/list?pageSize=15&pageNum=12
+{
+    "pageNum":1,
+    "pageSize":15,
+    "totalPage":14,
+    "totalSize":1234,
+    "data":[]
+}
