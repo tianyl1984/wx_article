@@ -18,6 +18,9 @@
 /article/setRead?articalId=123
 {"result":true}
 
+/article/addFavorite?articalId=123
+{"result":true}
+
 /article/list?pageSize=15&pageNum=12
 {
     "pageNum":1,

@@ -9,7 +9,7 @@ import (
 	"wx_article/util"
 )
 
-type ArticalController struct {
+type ArticleController struct {
 	beego.Controller
 }
 
@@ -26,7 +26,7 @@ type ArticleResult struct {
 	AppId int64 `json:"appId"`
 }
 
-func (this *ArticalController) Save()  {
+func (this *ArticleController) Save()  {
 	var msgs []models.AppMsg
 	json.Unmarshal(this.Ctx.Input.RequestBody,&msgs)
 
@@ -50,6 +50,7 @@ func (this *ArticalController) Save()  {
 		artical.AppId = app.Id
 		artical.Digest = msg.Digest
 		artical.HasRead = false
+		artical.Favorite = false
 		artical.Title = msg.Title
 		artical.Url = msg.Url
 		if msg.PublishTime != "" {
@@ -68,7 +69,7 @@ func (this *ArticalController) Save()  {
 	this.serveOk()
 }
 
-func (this *ArticalController) SetRead(){
+func (this *ArticleController) SetRead(){
 	articleId,err := this.GetInt64("articleId")
 	if err != nil {
 		panic(err)
@@ -80,7 +81,19 @@ func (this *ArticalController) SetRead(){
 	this.serveOk()
 }
 
-func (this *ArticalController) List()  {
+func (this *ArticleController) AddFavorite(){
+	articleId,err := this.GetInt64("articleId")
+	if err != nil {
+		panic(err)
+	}
+	o := orm.NewOrm()
+	if _,ok := o.Raw("update wx_article set favorite = ? where id = ? ",true, articleId).Exec();ok != nil {
+		panic(ok)
+	}
+	this.serveOk()
+}
+
+func (this *ArticleController) List()  {
 	page := models.Page{}
 	if pageSize,err := this.GetInt("pageSize",15); err != nil {
 		panic(err)
@@ -161,7 +174,7 @@ func (this *ArticalController) List()  {
 	this.ServeJSON()
 }
 
-func (this *ArticalController) serveOk() {
+func (this *ArticleController) serveOk() {
 	rr := RequestResult{Result:true}
 	this.Data["json"] = &rr
 	this.ServeJSON()

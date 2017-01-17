@@ -21,6 +21,7 @@ type Article struct {
 	PublishTime time.Time `orm:"column(publishTime)"`
 	Uuid string
 	HasRead bool `orm:"column(hasRead)"`
+	Favorite bool `orm:"column(favorite)"`
 	OfflineUrl string `orm:"column(offlineUrl)"`
 }
 
