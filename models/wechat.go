@@ -30,8 +30,8 @@ func init()  {
 	if err1 != nil {
 		panic(err1)
 	}
-	err := orm.RegisterDataBase("default","mysql","root:tyl123@tcp(192.168.0.111:3306)/weixin?charset=utf8",3,3)
-	//err := orm.RegisterDataBase("default","mysql","root:tyl123@tcp(127.0.0.1:3306)/weixin?charset=utf8",3,3)
+	//err := orm.RegisterDataBase("default","mysql","root:tyl123@tcp(192.168.0.111:3306)/weixin?charset=utf8",3,3)
+	err := orm.RegisterDataBase("default","mysql","root:tyl123@tcp(127.0.0.1:3306)/weixin?charset=utf8",3,3)
 	if err != nil {
 		panic(err)
 	}

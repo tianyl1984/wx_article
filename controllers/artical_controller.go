@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"github.com/astaxie/beego/orm"
 	"time"
+	"wx_article/util"
 )
 
 type ArticalController struct {
@@ -20,6 +21,9 @@ type ArticleResult struct {
 	Url string `json:"url"`
 	Title string `json:"title"`
 	Id int64 `json:"id"`
+	PublishTime util.Time `json:"publishTime"`
+	AppName string `json:"appName"`
+	AppId int64 `json:"appId"`
 }
 
 func (this *ArticalController) Save()  {
@@ -107,6 +111,8 @@ func (this *ArticalController) List()  {
 		panic(err)
 	}
 
+	var appIds []int64
+	var appIdMap map[int64]interface{} = make(map[int64]interface{},len(maps))
 	var articles []ArticleResult
 	for _,m := range maps {
 		var temp = ArticleResult{}
@@ -119,7 +125,34 @@ func (this *ArticalController) List()  {
 		if str,ok := m["Url"].(string); ok {
 			temp.Url = str
 		}
+		if t,ok := m["PublishTime"].(time.Time); ok {
+			temp.PublishTime = util.Time(t)
+		}
+		if id,ok := m["AppId"].(int64); ok {
+			if _,ok := appIdMap[id]; !ok {
+				appIdMap[id] = ""
+				appIds = append(appIds,id)
+			}
+			temp.AppId = id
+		}
 		articles = append(articles,temp)
+	}
+	if len(appIds) > 0 {
+		appQs := o.QueryTable("wx_app")
+		appMap := make(map[int64]string)
+		appList := []orm.Params{}
+		appQs.Filter("Id__in",appIds).Values(&appList)
+		for _,app := range appList {
+			if id,ok := app["Id"].(int64); ok {
+				if str,ok := app["Name"].(string); ok {
+					appMap[id] = str
+				}
+			}
+		}
+
+		for i, _ := range articles {
+			articles[i].AppName = appMap[articles[i].AppId]
+		}
 	}
 
 	page.Data = articles
