@@ -20,9 +20,10 @@ type Article struct {
 	Digest      string
 	PublishTime time.Time `orm:"column(publishTime)"`
 	Uuid        string
-	HasRead     bool   `orm:"column(hasRead)"`
-	Favorite    bool   `orm:"column(favorite)"`
-	OfflineUrl  string `orm:"column(offlineUrl)"`
+	HasRead     bool      `orm:"column(hasRead)"`
+	Favorite    bool      `orm:"column(favorite)"`
+	OfflineUrl  string    `orm:"column(offlineUrl)"`
+	ReadTime    time.Time `orm:"column(readTime)"`
 }
 
 type DeleteMessage struct {

@@ -168,3 +168,74 @@ func (this *ArticleController) List() {
 	this.Data["json"] = &page
 	this.ServeJSON()
 }
+
+func (this *ArticleController) ListDelArticle() {
+	o := orm.NewOrm()
+	var delMsgs []*models.DeleteMessage
+	if _, err := o.QueryTable("wx_delete_message").All(&delMsgs); err != nil {
+		panic("find delete message error")
+	}
+
+	var apps []*models.App
+	if _, err := o.QueryTable("wx_app").All(&apps); err != nil {
+		panic("find app error")
+	}
+	appMap := make(map[string]int64)
+	for _, app := range apps {
+		appMap[app.Publisher] = app.Id
+	}
+
+	var articleResult []ArticleResult
+	var existArticleMap = make(map[int64]string)
+	for _, delMsg := range delMsgs {
+		var articles []*models.Article
+		_, err := o.QueryTable("wx_article").Filter("AppId", appMap[delMsg.Publisher]).
+			Filter("HasRead", false).Filter("PublishTime__lte", delMsg.CreateTime).All(&articles)
+		if err != nil {
+			panic("find article error")
+		}
+		for _, article := range articles {
+			if _, ok := existArticleMap[article.Id]; ok {
+				continue
+			}
+			ar := ArticleResult{Url: article.Url, Id: article.Id, Title: article.Title,
+				PublishTime: util.Time(article.PublishTime),
+				AppId:       article.AppId, AppName: delMsg.Publisher}
+			articleResult = append(articleResult, ar)
+			existArticleMap[article.Id] = ""
+		}
+	}
+
+	this.Data["json"] = &articleResult
+	this.ServeJSON()
+}
+
+func (this *ArticleController) ReadDelArticle() {
+	o := orm.NewOrm()
+	var delMsgs []*models.DeleteMessage
+	if _, err := o.QueryTable("wx_delete_message").All(&delMsgs); err != nil {
+		panic("find delete message error")
+	}
+
+	var apps []*models.App
+	if _, err := o.QueryTable("wx_app").All(&apps); err != nil {
+		panic("find app error")
+	}
+	appMap := make(map[string]int64)
+	for _, app := range apps {
+		appMap[app.Publisher] = app.Id
+	}
+
+	for _, delMsg := range delMsgs {
+		if _, err := o.QueryTable("wx_article").Filter("AppId", appMap[delMsg.Publisher]).
+			Filter("HasRead", false).Filter("PublishTime__lte", delMsg.CreateTime).
+			Update(orm.Params{"hasRead": true, "readTime": time.Now()}); err != nil {
+			panic("update article error")
+		}
+	}
+	if _, err := o.QueryTable("wx_delete_message").Filter("id__gt", 0).Delete(); err != nil {
+		panic("remove delete message error")
+	}
+
+	this.serveOk()
+}
