@@ -31,3 +31,11 @@
     {"id":123,"title":"","url":"","publishTime":"","appName":"","appId":123}
     ]
 }
+
+
+/message/addDeleteMessage
+[
+  {"talker":"gh_06a331376c81","createTime":"1486338305000"}
+]
+
+

@@ -25,6 +25,12 @@ type Article struct {
 	OfflineUrl  string `orm:"column(offlineUrl)"`
 }
 
+type DeleteMessage struct {
+	Id         int64 `PK`
+	Publisher  string
+	CreateTime time.Time `orm:"column(createTime)"`
+}
+
 func init() {
 	orm.Debug = true
 	err1 := orm.RegisterDriver("mysql", orm.DRMySQL)
@@ -36,5 +42,5 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	orm.RegisterModelWithPrefix("wx_", new(App), new(Article))
+	orm.RegisterModelWithPrefix("wx_", new(App), new(Article), new(DeleteMessage))
 }

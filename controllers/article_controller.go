@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"time"
 	"wx_article/models"
@@ -10,11 +9,7 @@ import (
 )
 
 type ArticleController struct {
-	beego.Controller
-}
-
-type RequestResult struct {
-	Result bool `json:"result"`
+	BaseController
 }
 
 type ArticleResult struct {
@@ -171,11 +166,5 @@ func (this *ArticleController) List() {
 	page.Data = articles
 
 	this.Data["json"] = &page
-	this.ServeJSON()
-}
-
-func (this *ArticleController) serveOk() {
-	rr := RequestResult{Result: true}
-	this.Data["json"] = &rr
 	this.ServeJSON()
 }
