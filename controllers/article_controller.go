@@ -180,9 +180,9 @@ func (this *ArticleController) ListDelArticle() {
 	if _, err := o.QueryTable("wx_app").All(&apps); err != nil {
 		panic("find app error")
 	}
-	appMap := make(map[string]*models.App)
+	appMap := make(map[string]models.App)
 	for _, app := range apps {
-		appMap[app.Publisher] = app
+		appMap[app.Publisher] = *app
 	}
 
 	var articleResult []ArticleResult = make([]ArticleResult, 0)
