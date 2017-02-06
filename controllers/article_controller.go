@@ -75,7 +75,7 @@ func (this *ArticleController) SetRead() {
 		panic(err)
 	}
 	o := orm.NewOrm()
-	if _, ok := o.Raw("update wx_article set hasRead = ? where id = ? ", true, articleId).Exec(); ok != nil {
+	if _, ok := o.Raw("update wx_article set hasRead = ?,readTime = ? where id = ? ", true, time.Now(), articleId).Exec(); ok != nil {
 		panic(ok)
 	}
 	this.serveOk()
