@@ -180,16 +180,16 @@ func (this *ArticleController) ListDelArticle() {
 	if _, err := o.QueryTable("wx_app").All(&apps); err != nil {
 		panic("find app error")
 	}
-	appMap := make(map[string]int64)
+	appMap := make(map[string]*models.App)
 	for _, app := range apps {
-		appMap[app.Publisher] = app.Id
+		appMap[app.Publisher] = app
 	}
 
-	var articleResult []ArticleResult = make([]ArticleResult,0)
+	var articleResult []ArticleResult = make([]ArticleResult, 0)
 	var existArticleMap = make(map[int64]string)
 	for _, delMsg := range delMsgs {
 		var articles []*models.Article
-		_, err := o.QueryTable("wx_article").Filter("AppId", appMap[delMsg.Publisher]).
+		_, err := o.QueryTable("wx_article").Filter("AppId", appMap[delMsg.Publisher].Id).
 			Filter("HasRead", false).Filter("PublishTime__lte", delMsg.CreateTime).All(&articles)
 		if err != nil {
 			panic("find article error")
@@ -200,7 +200,7 @@ func (this *ArticleController) ListDelArticle() {
 			}
 			ar := ArticleResult{Url: article.Url, Id: article.Id, Title: article.Title,
 				PublishTime: util.Time(article.PublishTime),
-				AppId:       article.AppId, AppName: delMsg.Publisher}
+				AppId:       article.AppId, AppName: appMap[delMsg.Publisher].Name}
 			articleResult = append(articleResult, ar)
 			existArticleMap[article.Id] = ""
 		}
