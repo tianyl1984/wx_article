@@ -185,7 +185,7 @@ func (this *ArticleController) ListDelArticle() {
 		appMap[app.Publisher] = app.Id
 	}
 
-	var articleResult []ArticleResult
+	var articleResult []ArticleResult = make([]ArticleResult,0)
 	var existArticleMap = make(map[int64]string)
 	for _, delMsg := range delMsgs {
 		var articles []*models.Article
