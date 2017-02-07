@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/astaxie/beego/orm"
 	"strconv"
 	"time"
@@ -27,5 +28,26 @@ func (this *MessageController) AddDeleteMessage() {
 			panic("save deleteMessage error")
 		}
 	}
+	this.serveOk()
+}
+
+func (this *MessageController) List() {
+	o := orm.NewOrm()
+
+	timeStr := "1486425770000"
+	timeInt64, _ := strconv.ParseInt(timeStr, 10, 64)
+	tm := time.Unix(timeInt64/1000, 0)
+
+	toSave := models.DeleteMessage{}
+	toSave.Publisher = "1234"
+	toSave.CreateTime = tm
+	o.Insert(&toSave)
+
+	var msgs []*models.DeleteMessage
+	o.QueryTable("wx_delete_message").All(&msgs)
+	for _, msg := range msgs {
+		fmt.Println(msg.CreateTime)
+	}
+
 	this.serveOk()
 }
