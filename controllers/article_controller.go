@@ -49,7 +49,9 @@ func (this *ArticleController) Save() {
 		artical.Title = msg.Title
 		artical.Url = msg.Url
 		if msg.PublishTime != "" {
-			t, e := time.Parse("2006-01-02 15:04:05", msg.PublishTime)
+			loc, _ := time.LoadLocation("Local")
+			//t, e := time.Parse("2006-01-02 15:04:05", msg.PublishTime)
+			t, e := time.ParseInLocation("2006-01-02 15:04:05", msg.PublishTime, loc)
 			if e != nil {
 				panic(e)
 			}
