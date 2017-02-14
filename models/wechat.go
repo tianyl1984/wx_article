@@ -33,6 +33,7 @@ type DeleteMessage struct {
 }
 
 func init() {
+	orm.DefaultRowsLimit = -1
 	orm.Debug = true
 	err1 := orm.RegisterDriver("mysql", orm.DRMySQL)
 	if err1 != nil {
