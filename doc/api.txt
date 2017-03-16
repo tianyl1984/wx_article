@@ -45,3 +45,12 @@
 ]
 {"result":true}
 
+
+/app/list
+[
+{"id":1,"name":"aaa"},
+]
+
+
+
+

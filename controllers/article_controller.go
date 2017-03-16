@@ -102,19 +102,39 @@ func (this *ArticleController) List() {
 	} else {
 		page.PageNum = pageNum
 	}
+	appId, err := this.GetInt("appId", 0)
+	if err != nil {
+		panic(err)
+	}
 
 	var pageSize = page.PageSize
 	var pageNum = page.PageNum
 	o := orm.NewOrm()
-	if err := o.Raw("select count(1) as total_size from wx_article where hasRead = ? ", false).QueryRow(&page); err != nil {
+	var countSql = "select count(1) as total_size from wx_article where hasRead = ? "
+	if appId > 0 {
+		countSql += " and id_app = ? "
+	}
+
+	if appId > 0 {
+		err = o.Raw(countSql, false, appId).QueryRow(&page)
+	} else {
+		err = o.Raw(countSql, false).QueryRow(&page)
+	}
+
+	if err != nil {
 		panic(err)
 	}
+
 	page.TotalPage = page.TotalSize / pageSize
 	if page.TotalSize%pageSize > 0 {
 		page.TotalPage = page.TotalPage + 1
 	}
 	qs := o.QueryTable("wx_article")
-	qs = qs.Filter("hasRead", false).OrderBy("-id").Limit(page.PageSize, page.PageSize*(pageNum-1))
+	qs = qs.Filter("hasRead", false)
+	if appId > 0 {
+		qs = qs.Filter("AppId", appId)
+	}
+	qs = qs.OrderBy("-id").Limit(page.PageSize, page.PageSize*(pageNum-1))
 
 	var maps []orm.Params
 	if _, err := qs.Values(&maps); err != nil {
