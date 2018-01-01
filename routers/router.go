@@ -12,6 +12,7 @@ func init() {
 	beego.Router("/article/list", &controllers.ArticleController{}, "*:List")
 	beego.Router("/article/listDelArticle", &controllers.ArticleController{}, "*:ListDelArticle")
 	beego.Router("/article/readDelArticle", &controllers.ArticleController{}, "*:ReadDelArticle")
+	beego.Router("/article/test", &controllers.ArticleController{}, "*:Test")
 	beego.Router("/message/addDeleteMessage", &controllers.MessageController{}, "*:AddDeleteMessage")
 	beego.Router("/message/list", &controllers.MessageController{}, "*:List")
 	beego.Router("/app/list", &controllers.AppController{}, "*:List")

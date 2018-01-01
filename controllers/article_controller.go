@@ -6,6 +6,7 @@ import (
 	"time"
 	"wx_article/models"
 	"wx_article/util"
+	"wx_article/cache"
 )
 
 type ArticleController struct {
@@ -28,6 +29,9 @@ func (this *ArticleController) Save() {
 	//TODO 批量操作
 
 	for _, msg := range msgs {
+		if !cache.Add(msg.Url) {
+			continue
+		}
 		app := models.App{}
 		app.Name = msg.AppName
 		app.Publisher = msg.PublisherUsername
@@ -260,4 +264,10 @@ func (this *ArticleController) ReadDelArticle() {
 	}
 
 	this.serveOk()
+}
+
+func (this *ArticleController) Test()  {
+	//this.Data["json"] = cache.Add("http://mp.weixin.qq.com/s?__biz=MzA4MTQ4NjQzMw==&mid=2652708426&idx=1&sn=6691dd192ebb91db141bba11b2358481&chksm=847d8944b30a0052a1f6682d92da4e1af58111b7a7fdda9e2e7f1e400fba0f6afeee87689281&scene=0#rd")
+	this.Data["json"] = cache.Size()
+	this.ServeJSON()
 }
